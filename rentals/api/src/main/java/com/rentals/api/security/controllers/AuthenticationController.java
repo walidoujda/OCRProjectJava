@@ -24,6 +24,7 @@ import com.rentals.api.models.ERole;
 import com.rentals.api.models.User;
 import com.rentals.api.repositories.UserRepository;
 import com.rentals.api.security.config.JwtTokenUtil;
+import com.rentals.api.security.filter.AuthTokenFilter;
 import com.rentals.api.security.model.MyUserDetails;
 import com.rentals.api.security.request.LoginRequest;
 import com.rentals.api.security.request.SignupRequest;
@@ -31,8 +32,8 @@ import com.rentals.api.security.response.JwtResponse;
 import com.rentals.api.security.response.MessageResponse;
 import com.rentals.api.security.response.UserInfoResponse;
 import com.rentals.api.security.services.JwtUserDetailsService;
-
-import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @CrossOrigin
@@ -49,25 +50,34 @@ public class AuthenticationController {
     UserRepository userRepository;
     @Autowired
     private JwtUserDetailsService userDetailsService;
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @PostMapping(value = "/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest authenticationRequest)
             throws Exception {
 
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+        logger.info("this is a info message");
+        logger.warn("this is a warn message");
+        logger.error("this is a error message");
+        authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
 
-        final MyUserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-
-        final String token = jwtTokenUtil.generateTokenFromUser(userDetails);
+        final MyUserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
         ResponseCookie jwtCookie = jwtTokenUtil.generateJwtCookie(userDetails);
 
         List<String> roles = new ArrayList<String>();
         roles.add(ERole.ROLE_USER.name());
+        System.out.println(userDetails.getEmail() + userDetails.getName());
+
+        UserInfoResponse userInfoResponse = new UserInfoResponse(
+                userDetails.getId(),
+                userDetails.getEmail(),
+                userDetails.getName(),
+                userDetails.getCreated_at(),
+                userDetails.getUpdated_at());
+        System.out.println(userInfoResponse.getEmail());
+        System.out.println(userInfoResponse.getName());
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .body(new UserInfoResponse(userDetails.getId(),
-                        userDetails.getEmail(),
-                        userDetails.getEmail(),
-                        roles));
+                .body(userInfoResponse);
         // return ResponseEntity.ok(new JwtResponse(token));
     }
 

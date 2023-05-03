@@ -28,15 +28,11 @@ public class MessagesController {
     public ResponseEntity<?> addMessage(@Valid @RequestBody MessagesRequest messageRequest) {
 
         try {
-            System.out.println(
-                    "###############################################################");
-            System.out.println(messageRequest.getRental_id());
             Message message = new Message();
             message.setId(null);
             message.setRental_id(messageRequest.getRental_id());
             message.setUser_id(messageRequest.getUser_id());
             message.setMessage(messageRequest.getMessage());
-            System.out.println(message.toString());
             messageRepository.save(message);
             ObjectMapper mapper = new ObjectMapper();
             return ResponseEntity.ok().body("User Content." + mapper.writeValueAsString(messageRequest));

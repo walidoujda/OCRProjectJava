@@ -1,9 +1,11 @@
 package com.rentals.api.controllers;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -59,6 +61,7 @@ public class RentalsController {
             rental.setPrice(price);
             rental.setSurface(surface);
             rental.setOwner_id(user.getId());
+            rental.setCreated_at(new Date(System.currentTimeMillis()));
             rentalsRepository.save(rental);
             return fileName;
         } catch (Exception e) {
@@ -84,7 +87,7 @@ public class RentalsController {
         try {
             List<Rental> rentals = rentalsRepository.findAll();
             ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(rentals);
+            return "{ \n  \"rentals\":" + mapper.writeValueAsString(rentals) + "}";
         } catch (Exception e) {
             return e.getMessage();
         }

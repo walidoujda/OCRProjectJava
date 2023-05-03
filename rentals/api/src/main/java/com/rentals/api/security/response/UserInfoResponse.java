@@ -1,18 +1,21 @@
 package com.rentals.api.security.response;
 
+import java.sql.Date;
 import java.util.List;
 
 public class UserInfoResponse {
 	private Long id;
-	private String username;
+	private String name;
 	private String email;
-	private List<String> roles;
+	private Date created_at;
+	private Date updated_at;
 
-	public UserInfoResponse(Long id, String username, String email, List<String> roles) {
+	public UserInfoResponse(Long id, String email, String name, Date created_at, Date updated_at) {
 		this.id = id;
-		this.username = username;
+		this.name = name;
 		this.email = email;
-		this.roles = roles;
+		this.created_at = created_at;
+		this.updated_at = updated_at;
 	}
 
 	public Long getId() {
@@ -31,15 +34,27 @@ public class UserInfoResponse {
 		this.email = email;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getName() {
+		return name;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public List<String> getRoles() {
-		return roles;
+	public Date getCreated_at() {
+		return created_at;
+	}
+
+	public void setCreated_at(Date created_at) {
+		this.created_at = created_at;
+	}
+
+	public Date getUpdated_at() {
+		return updated_at;
+	}
+
+	public void setUpdated_at(Date updated_at) {
+		this.updated_at = updated_at;
 	}
 }

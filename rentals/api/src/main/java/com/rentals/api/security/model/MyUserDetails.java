@@ -1,5 +1,6 @@
 package com.rentals.api.security.model;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -20,15 +21,24 @@ public class MyUserDetails implements UserDetails {
 
     private String email;
 
+    private String name;
+
     @JsonIgnore
     private String password;
 
+    private Date created_at;
+
+    private Date updated_at;
+
     private List<GrantedAuthority> authorities;
 
-    public MyUserDetails(Long id, String email, String password,
+    public MyUserDetails(Long id, String name, String email, String password, Date created_at, Date updated_at,
             List<GrantedAuthority> authorities2) {
         this.id = id;
         this.email = email;
+        this.name = name;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
         this.password = password;
         this.authorities = authorities2;
     }
@@ -44,8 +54,11 @@ public class MyUserDetails implements UserDetails {
 
         return new MyUserDetails(
                 user.getId(),
+                user.getName(),
                 user.getEmail(),
                 user.getPassword(),
+                user.getCreated_at(),
+                user.getUpdated_at(),
                 authorities);
     }
 
@@ -101,4 +114,29 @@ public class MyUserDetails implements UserDetails {
         MyUserDetails user = (MyUserDetails) o;
         return Objects.equals(id, user.id);
     }
+
+    public Date getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
+    }
+
+    public Date getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(Date updated_at) {
+        this.updated_at = updated_at;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
 }
