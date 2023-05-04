@@ -1,7 +1,6 @@
 package com.rentals.api.security.response;
 
 import java.sql.Date;
-import java.util.List;
 
 public class UserInfoResponse {
 	private Long id;

@@ -9,8 +9,6 @@ import com.rentals.api.models.User;
 import com.rentals.api.repositories.UserRepository;
 import com.rentals.api.security.model.MyUserDetails;
 
-import java.util.ArrayList;
-
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 	@Autowired

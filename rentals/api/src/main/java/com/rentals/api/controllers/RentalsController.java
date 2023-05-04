@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,6 +23,7 @@ import com.rentals.api.models.Rental;
 import com.rentals.api.models.User;
 import com.rentals.api.repositories.RentalsRepository;
 import com.rentals.api.repositories.UserRepository;
+import com.rentals.api.response.MessageResponse;
 import com.rentals.api.security.config.JwtTokenUtil;
 import com.rentals.api.services.FileStorageService;
 
@@ -57,7 +58,7 @@ public class RentalsController {
             rental.setId(rentalId);
             rental.setDescription(description);
             rental.setName(fileName);
-            rental.setPicture(fileName);
+            rental.setPicture("http://localhost:3001/uploads/" + fileName);
             rental.setPrice(price);
             rental.setSurface(surface);
             rental.setOwner_id(user.getId());
@@ -95,12 +96,30 @@ public class RentalsController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public String updateRental(
+    public ResponseEntity<String> updateRental(
+            @CookieValue("rentals") String rentCookie,
+            @PathVariable("id") Long rentalId,
             @RequestParam("name") String name,
             @RequestParam("surface") Double surface,
             @RequestParam("price") Double price,
             @RequestParam("description") String description) {
+        try {
+            String userName = jwtUtils.getUserNameFromJwtToken(rentCookie);
+            User user = userRepository.findByEmail(userName);
+            Rental rental = rentalsRepository.findById(rentalId).get();
+            rental.setId(rentalId);
+            rental.setDescription(description);
+            rental.setPrice(price);
+            rental.setSurface(surface);
+            rental.setOwner_id(user.getId());
+            rental.setUpdated_at(new Date(System.currentTimeMillis()));
+            rentalsRepository.save(rental);
+            ObjectMapper mapper = new ObjectMapper();
+            MessageResponse messageResponse = new MessageResponse("success");
+            return ResponseEntity.ok().body(mapper.writeValueAsString(messageResponse));
+        } catch (Exception e) {
+            return ResponseEntity.ok().body("User Content." + e.getMessage());
+        }
 
-        return "User Content.";
     }
 }

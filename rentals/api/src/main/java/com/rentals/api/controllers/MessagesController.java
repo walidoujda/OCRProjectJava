@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rentals.api.models.Message;
 import com.rentals.api.repositories.MessageRepository;
 import com.rentals.api.request.MessagesRequest;
+import com.rentals.api.response.MessageResponse;
 
 import jakarta.validation.Valid;
 
@@ -24,7 +25,6 @@ public class MessagesController {
     MessageRepository messageRepository;
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> addMessage(@Valid @RequestBody MessagesRequest messageRequest) {
 
         try {
@@ -35,7 +35,8 @@ public class MessagesController {
             message.setMessage(messageRequest.getMessage());
             messageRepository.save(message);
             ObjectMapper mapper = new ObjectMapper();
-            return ResponseEntity.ok().body("User Content." + mapper.writeValueAsString(messageRequest));
+            MessageResponse messageResponse = new MessageResponse(message.getMessage());
+            return ResponseEntity.ok().body(mapper.writeValueAsString(messageResponse));
 
         } catch (Exception e) {
             return ResponseEntity.ok().body("User Content." + e.getMessage());
