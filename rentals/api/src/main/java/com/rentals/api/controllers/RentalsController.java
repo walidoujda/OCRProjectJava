@@ -118,7 +118,7 @@ public class RentalsController {
             MessageResponse messageResponse = new MessageResponse("success");
             return ResponseEntity.ok().body(mapper.writeValueAsString(messageResponse));
         } catch (Exception e) {
-            return ResponseEntity.ok().body("User Content." + e.getMessage());
+            return ResponseEntity.ok().body("Error : " + e.getMessage());
         }
 
     }
